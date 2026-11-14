@@ -1,0 +1,18 @@
+{
+  "name": "مركز أسنان الجوهرة - نظام الاستقبال",
+  "short_name": "الجوهرة لطب الأسنان",
+  "description": "بوابة موظفي الاستقبال لمركز أسنان الجوهرة - فرع ميامي",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#D2F6F3",
+  "theme_color": "#0F766E",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "assets/logo.jpg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

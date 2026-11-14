@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>مركز أسنان الجوهرة | نظام إدارة الاستقبال المتكامل</title>
+  
+  <!-- Theme Default: Always Light mode for first visit -->
+  <script>
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <!-- PWA Manifest (Loaded dynamically on HTTP/S to prevent CORS warnings on file://) -->
+  <script>
+    if (window.location.protocol.startsWith('http')) {
+      const m = document.createElement('link');
+      m.rel = 'manifest';
+      m.href = 'manifest.json';
+      document.head.appendChild(m);
+    }
+  </script>
+  <meta name="theme-color" content="#0D9488">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Favicon / Logo on Browser Tab -->
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+  <link rel="shortcut icon" type="image/jpeg" href="assets/logo.jpg">
+  <link rel="apple-touch-icon" href="assets/logo.jpg">
+
+  <!-- Cairo Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        screens: {
+          'xs': '420px',
+          'sm': '640px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
+          '2xl': '1536px'
+        },
+        extend: {
+          colors: {
+            brand: {
+              mint: '#D2F6F3',
+              'mint-light': '#E8FAF8',
+              'mint-dark': '#B2ECE6',
+              teal: '#0D9488',
+              'teal-dark': '#0F766E',
+              'teal-deep': '#113238',
+              'teal-midnight': '#081E22',
+              cyan: '#06B6D4',
+              emerald: '#10B981',
+              amber: '#F59E0B',
+              indigo: '#6366F1',
+              purple: '#8B5CF6',
+              rose: '#F43F5E'
+            }
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+            sans: ['Cairo', 'sans-serif']
+          },
+          boxShadow: {
+            'glow-teal': '0 0 20px -5px rgba(13, 148, 136, 0.3)',
+            'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.3)',
+            'card': '0 4px 20px -2px rgba(17, 50, 56, 0.06), 0 2px 6px -1px rgba(17, 50, 56, 0.04)',
+            'card-hover': '0 12px 30px -4px rgba(13, 148, 136, 0.15), 0 4px 10px -2px rgba(13, 148, 136, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* High Performance 60/120fps Rendering & Eye Comfort Standards */
+    html {
+      scroll-behavior: smooth;
+      text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    /* Prevent mobile browser (iOS Safari / Chrome) auto-zoom on input focus */
+    @media screen and (max-width: 768px) {
+      input[type="text"],
+      input[type="number"],
+      input[type="password"],
+      select,
+      textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Fast, smooth custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.02); border-radius: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #0D9488; border-radius: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #0F766E; }
+    .dark .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #14B8A6; }
+
+    /* Invisible scrollbar for horizontal mobile swipe */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Fluid momentum scrolling */
+    .touch-pan-x {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+
+    /* Sticky table column shadow elevation */
+    .table-sticky-col {
+      position: sticky;
+      right: 0;
+      z-index: 10;
+      box-shadow: -3px 0 6px -2px rgba(17, 50, 56, 0.08);
+    }
+    .dark .table-sticky-col {
+      box-shadow: -3px 0 6px -2px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Performance-optimized solid surface (Zero GPU blur penalty on large lists) */
+    .glass-panel {
+      background: #FFFFFF;
+      box-shadow: 0 4px 20px -2px rgba(17, 50, 56, 0.05), 0 2px 6px -1px rgba(17, 50, 56, 0.03);
+    }
+    .dark .glass-panel {
+      background: #0E262B;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 2px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Top navbar header retains silky blur without list lag */
+    header.sticky {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark header.sticky {
+      background: rgba(8, 30, 34, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* 60fps / 120fps Card Rendering with content-visibility */
+    .modern-card {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 175px;
+      transform: translateZ(0);
+      will-change: transform;
+      transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease;
+    }
+    .modern-card:hover {
+      transform: translateY(-2.5px);
+    }
+
+    /* Morning & Evening Badges - Calm, Eye-Comfortable Pastel Tones */
+    .badge-morning {
+      background: #FEF9EE;
+      color: #854D0E;
+      border: 1px solid #FDE68A;
+    }
+    .dark .badge-morning {
+      background: rgba(245, 158, 11, 0.12);
+      color: #FCD34D;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .badge-evening {
+      background: #F0FDF9;
+      color: #115E59;
+      border: 1px solid #99F6E4;
+    }
+    .dark .badge-evening {
+      background: rgba(20, 184, 166, 0.12);
+      color: #5EEAD4;
+      border: 1px solid rgba(20, 184, 166, 0.25);
+    }
+
+    /* Print styles */
+    @media print {
+      header, .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-only { display: block !important; }
+    }
+  </style>
+</head>
+<body class="bg-[#F6FAF9] dark:bg-[#0A1C1F] text-slate-800 dark:text-slate-100 antialiased selection:bg-teal-600 selection:text-white">
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HEADER                                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <header class="glass-panel sticky top-0 z-40 border-b border-teal-100/80 dark:border-teal-900/40 shadow-sm transition-colors">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      
+      <!-- Top Bar -->
+      <div class="py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
+        
+        <!-- Logo & Center Identity -->
+        <div class="flex items-center gap-2.5 sm:gap-3.5 select-none min-w-0">
+          <div id="brandLogoContainer" onclick="handleSecretLogoClick()" title="مركز أسنان الجوهرة - اضغط 5 مرات للإدارة" class="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-teal-100 via-white to-cyan-100 dark:from-teal-950 dark:to-teal-900 border-2 border-teal-500/30 shadow-md flex items-center justify-center p-0.5 sm:p-1 cursor-pointer active:scale-95 transition-transform hover:border-teal-500 flex-shrink-0">
+            <img src="assets/logo.jpg" alt="مركز أسنان الجوهرة" class="w-full h-full object-contain rounded-lg sm:rounded-xl" onerror="this.src='https://via.placeholder.com/150?text=الجوهرة'">
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              <h1 class="text-base sm:text-lg md:text-xl font-extrabold text-[#113238] dark:text-teal-200 tracking-tight truncate">مجموعة الجوهرة لطب الأسنان</h1>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs flex-shrink-0">
+                <i data-lucide="map-pin" class="w-2.5 h-2.5 sm:w-3 sm:h-3"></i>
+                <span>فرع ميامي</span>
+              </span>
+            </div>
+            <p class="hidden xs:block text-[11px] sm:text-xs text-slate-500 dark:text-teal-400/80 font-medium mt-0.5 truncate">بوابة الاستقبال الموحدة | استعلام فوري للمواعيد والأسعار والعيادات</p>
+          </div>
+        </div>
+
+        <!-- Header Status & Controls -->
+        <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+          <!-- Live Shift Indicator -->
+          <div id="currentShiftBadge" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-950/60 dark:to-emerald-950/40 border border-teal-200/90 dark:border-teal-800/60 text-xs font-bold text-teal-900 dark:text-teal-200 shadow-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="shiftText">جاري تحديد الشيفت الحالي...</span>
+          </div>
+
+          <!-- Network Online Status -->
+          <div id="networkStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-emerald-100/70 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-300 text-xs font-bold border border-emerald-300/70 dark:border-emerald-800/60 shadow-xs" title="حالة الاتصال بالإنترنت">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span id="networkStatusText" class="hidden sm:inline">متصل بالإنترنت</span>
+          </div>
+
+          <!-- Dark / Light Mode Toggle Button -->
+          <button onclick="toggleDarkMode()" id="darkModeBtn" title="تبديل الوضع الليلي / النهاري" class="p-2 sm:p-2.5 rounded-xl bg-white dark:bg-[#0E262B] hover:bg-teal-50 dark:hover:bg-teal-900/40 text-teal-800 dark:text-amber-400 border border-teal-200/80 dark:border-teal-800/60 shadow-xs transition-all active:scale-95">
+            <i data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
+            <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
+          </button>
+
+          <!-- Admin Control Button -->
+          <button onclick="openConfigModal()" title="لوحة التحكم الإدارية (تعديل الأطباء والمواعيد والأسعار)" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/70 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-900 dark:text-teal-200 border border-teal-200/90 dark:border-teal-800/70 text-xs font-black transition shadow-xs active:scale-95">
+            <i data-lucide="sliders" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
+            <span class="hidden sm:inline">لوحة الإدارة</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (Vibrant Pills) -->
+      <nav class="flex gap-1.5 sm:gap-2 pt-1.5 pb-2 overflow-x-auto no-scrollbar sm:custom-scrollbar border-t border-teal-100/60 dark:border-teal-900/30 touch-pan-x" style="-webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;" role="tablist">
+        
+        <button onclick="switchTab('doctors')" id="tabBtnDoctors" role="tab" style="scroll-snap-align: start;" class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-teal-600 via-teal-700 to-[#113238] dark:from-teal-500 dark:to-emerald-600 text-white shadow-md shadow-teal-700/20 whitespace-nowrap flex-shrink-0 transition-all">
+          <i data-lucide="user-search" class="w-4 h-4"></i>
+          <span>استعلام الأطباء والمواعيد</span>
+        </button>
+
+        <button onclick="switchTab('live-clinics')" id="tabBtnLiveClinics" role="tab" style="scroll-snap-align: start;" class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 whitespace-nowrap flex-shrink-0 transition-all">
+          <i data-lucide="building" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+          <span>توزيع العيادات الآن</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        </button>
+
+        <button onclick="switchTab('clinics')" id="tabBtnClinics" role="tab" style="scroll-snap-align: start;" class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 whitespace-nowrap flex-shrink-0 transition-all">
+          <i data-lucide="calendar-days" class="w-4 h-4 text-cyan-600 dark:text-cyan-400"></i>
+          <span>جدول العيادات الأسبوعي</span>
+        </button>
+
+        <button onclick="switchTab('services')" id="tabBtnServices" role="tab" style="scroll-snap-align: start;" class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 whitespace-nowrap flex-shrink-0 transition-all">
+          <i data-lucide="tag" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+          <span>قائمة الأسعار والخدمات</span>
+        </button>
+
+        <button onclick="switchTab('calculator')" id="tabBtnCalculator" role="tab" style="scroll-snap-align: start;" class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 whitespace-nowrap flex-shrink-0 transition-all">
+          <i data-lucide="calculator" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+          <span>حاسبة تكلفة العلاج</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MAIN CONTENT CONTAINER                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- DAILY NOTICE BOARD: سبورة ملاحظات وتعليمات اليوم -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="dailyNoticeBoardSection" class="mb-6 transition-all duration-300">
+      <div class="glass-panel rounded-3xl p-4 md:p-5 shadow-card border-2 border-amber-300/80 dark:border-amber-900/50 relative overflow-hidden bg-gradient-to-br from-amber-50/50 via-white/80 to-teal-50/30 dark:from-amber-950/20 dark:via-[#0E262B]/90 dark:to-teal-950/20">
+        <!-- Ambient Warm Glow -->
+        <div class="absolute -right-10 -top-10 w-44 h-44 bg-amber-400/15 dark:bg-amber-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Board Top Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-amber-200/60 dark:border-amber-900/40 relative z-10">
+          <div class="flex items-center gap-2.5">
+            <span class="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 text-white shadow-md shadow-amber-500/20">
+              <i data-lucide="pin" class="w-4 h-4"></i>
+              <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+              </span>
+            </span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm md:text-base font-extrabold text-[#113238] dark:text-amber-200">سبورة ملاحظات وتعليمات اليوم</h3>
+                <span id="noticesActiveCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">3 تعليمات</span>
+              </div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">توجيهات الإدارة، صيانة الأجهزة، ومستجدات الشفت لموظفي الاستقبال - فرع ميامي</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700/80 dark:text-amber-400/80 bg-amber-100/50 dark:bg-amber-950/40 px-2 py-1 rounded-lg border border-amber-200/50 dark:border-amber-900/40">
+              <i data-lucide="shield-check" class="w-3 h-3 text-amber-600 dark:text-amber-400"></i>
+              <span>صادرة من الإدارة</span>
+            </span>
+            <!-- Toggle Collapse Button -->
+            <button onclick="toggleNoticeBoardCollapse()" id="toggleNoticeBoardBtn" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#081E22] border border-amber-200 dark:border-amber-800 text-slate-600 dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-amber-950 text-xs font-bold transition" title="طي / توسيع السبورة">
+              <i id="toggleNoticeBoardIcon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+              <span id="toggleNoticeBoardText">طي</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Collapsed Compact Bar (Hidden by default) -->
+        <div id="noticeBoardCollapsedBar" class="hidden pt-2.5 flex items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
+            <span class="inline-flex items-center gap-1 text-amber-700 dark:text-amber-300 font-bold flex-shrink-0">
+              <i data-lucide="megaphone" class="w-3.5 h-3.5 animate-bounce"></i>
+              <span class="text-[11px]">آخر تنبيه:</span>
+            </span>
+            <span id="noticeCollapsedHighlight" class="text-slate-700 dark:text-slate-200 font-semibold truncate text-[11px]">...</span>
+          </div>
+          <button onclick="toggleNoticeBoardCollapse()" class="text-teal-700 dark:text-teal-300 hover:underline text-[11px] font-bold flex-shrink-0">
+            عرض كل التعليمات (<span id="noticesCollapsedCount">3</span>)
+          </button>
+        </div>
+
+        <!-- Expanded Notices Cards Grid -->
+        <div id="noticesCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-3.5 relative z-10">
+          <!-- Dynamically populated by renderDailyNotices() -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- TAB 1: DOCTORS INSTANT SEARCH & SCHEDULES   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="tabDoctors" class="space-y-6">
+      
+      <!-- Modern Hero Search Box -->
+      <div class="glass-panel rounded-3xl p-5 md:p-7 shadow-card border border-teal-100 dark:border-teal-900/50 relative overflow-hidden">
+        <!-- Ambient Color Glows -->
+        <div class="absolute -left-10 -bottom-10 w-56 h-56 bg-teal-400/15 dark:bg-teal-400/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -right-10 -top-10 w-56 h-56 bg-cyan-400/15 dark:bg-emerald-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 relative z-10">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="p-2 rounded-xl bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 shadow-xs">
+                <i data-lucide="stethoscope" class="w-5 h-5"></i>
+              </span>
+              <h2 class="text-lg md:text-xl font-extrabold text-[#113238] dark:text-teal-200">بحث فوري عن مواعيد الأطباء طوال الأسبوع</h2>
+            </div>
+            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 mr-9">ابحث باسم الطبيب بأي طريقة كتابة (أحمد، خالد، مصطفى، كريم...) أو بالعيادة أو اليوم</p>
+          </div>
+
+          <!-- Total Counter & Today Toggle -->
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <button onclick="toggleFilterTodayOnly()" id="btnTodayOnlyFilter" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-2 border-teal-300 dark:border-teal-700/80 bg-white dark:bg-[#0E262B] text-teal-800 dark:text-teal-200 hover:bg-teal-50 dark:hover:bg-teal-950 text-xs font-bold transition shadow-xs">
+              <i data-lucide="clock" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i>
+              <span id="todayFilterText">أطباء اليوم فقط</span>
+            </button>
+
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white text-xs font-extrabold shadow-sm">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span id="doctorsCountBadge">61 طبيب مسجل</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Search Input Bar & Specialty Selector -->
+        <div class="flex flex-col sm:flex-row gap-3 relative z-10">
+          <!-- Search Bar with Vibrant Accents -->
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-teal-600 dark:text-teal-400">
+              <i data-lucide="search" class="w-5 h-5"></i>
+            </div>
+            <input 
+              type="text" 
+              id="doctorSearchInput"
+              oninput="handleDoctorSearch(this.value)"
+              placeholder="اكتب اسم الطبيب (أحمد، خالد، كريم...) أو اسم العيادة..." 
+              class="w-full pr-12 pl-10 py-3.5 bg-teal-50/40 dark:bg-[#081E22]/90 rounded-2xl border-2 border-teal-200/90 dark:border-teal-800/80 focus:border-teal-500 dark:focus:border-teal-400 focus:bg-white dark:focus:bg-[#0E262B] focus:ring-4 focus:ring-teal-500/10 outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm md:text-base font-bold shadow-inner transition"
+              autofocus
+            >
+            <button 
+              id="clearDoctorSearchBtn" 
+              onclick="clearDoctorSearch()" 
+              class="hidden absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Specialty Dropdown -->
+          <div class="sm:w-64">
+            <div class="relative">
+              <select 
+                id="specialtySelect" 
+                onchange="filterBySpecialty(this.value)" 
+                class="w-full py-3.5 pr-4 pl-9 bg-teal-50/40 dark:bg-[#081E22]/90 border-2 border-teal-200/90 dark:border-teal-800/80 rounded-2xl text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-[#0E262B] transition shadow-inner appearance-none cursor-pointer"
+              >
+                <option value="">جميع التخصصات (الكل - 61)</option>
+                <option value="أطفال">أسنان أطفال - Pedo (13)</option>
+                <option value="جراحة">جراحة الفم والأسنان (3)</option>
+                <option value="تقويم">تقويم الأسنان (3)</option>
+                <option value="غرس">غرس وزراعة الأسنان (1)</option>
+                <option value="تركيبات">تركيبات متحركة وثابتة (3)</option>
+                <option value="عام">طب أسنان عام وجذور (38)</option>
+              </select>
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Filter Category Pills -->
+        <div class="flex items-center gap-1.5 sm:gap-2 mt-4 text-xs relative z-10 overflow-x-auto no-scrollbar sm:flex-wrap pb-1 touch-pan-x">
+          <span class="text-slate-500 dark:text-slate-400 font-bold ml-1 flex items-center gap-1 flex-shrink-0">
+            <i data-lucide="filter" class="w-3.5 h-3.5 text-teal-600"></i>
+            <span>تصفية سريعة:</span>
+          </span>
+          <button onclick="filterBySpecialty('')" class="spec-btn px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#113238] to-teal-800 text-white font-black transition flex items-center gap-1.5 shadow-sm border border-teal-700 flex-shrink-0" data-spec="">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5"><path d="M5 6C5 3.8 6.8 2 12 2C17.2 2 19 3.8 19 6C19 11 17.5 21 15 21C13.5 21 13.2 17 12 17C10.8 17 10.5 21 9 21C6.5 21 5 11 5 6Z" fill="currentColor" fill-opacity="0.2"/><path d="M9 10C9.5 11.5 14.5 11.5 15 10"/><path d="M12 6V8"/></svg>
+            <span>الكل</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-white/20 text-white text-[10px]">61</span>
+          </button>
+          <button onclick="filterBySpecialty('أطفال')" class="spec-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-spec="أطفال">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-teal-700 dark:text-teal-300"><path d="M5.5 7C5.5 4.5 7.5 3 12 3C16.5 3 18.5 4.5 18.5 7C18.5 12 17.5 20.5 15 20.5C13.5 20.5 13.2 16.5 12 16.5C10.8 16.5 10.5 20.5 9 20.5C6.5 20.5 5.5 12 5.5 7Z" fill="currentColor" fill-opacity="0.18"/><circle cx="9.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="14.5" cy="8.5" r="1.3" fill="currentColor"/><path d="M9.5 11.5C10.2 13 13.8 13 14.5 11.5" stroke-width="1.8"/><ellipse cx="7.5" cy="11.5" rx="1" ry="0.6" fill="currentColor" fill-opacity="0.4"/><ellipse cx="16.5" cy="11.5" rx="1" ry="0.6" fill="currentColor" fill-opacity="0.4"/><path d="M19 2L19.5 3.2L20.8 3.7L19.5 4.2L19 5.5L18.5 4.2L17.2 3.7L18.5 3.2Z" fill="currentColor"/></svg>
+            <span>أسنان أطفال</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-teal-50 dark:bg-teal-900/60 text-teal-900 dark:text-teal-200 text-[10px]">13</span>
+          </button>
+          <button onclick="filterBySpecialty('جراحة')" class="spec-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-spec="جراحة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-teal-700 dark:text-teal-300"><path d="M6 6C6 3.8 7.5 2.5 10.5 2.5C13.5 2.5 15 3.8 15 6C15 9.5 14.5 15.5 13 17.5C12 19 11.2 19 10.5 17.5C9.5 15.5 9 9.5 9 6" fill="currentColor" fill-opacity="0.15"/><path d="M4 20L8 16" stroke-width="2.5"/><path d="M8 16L7 13" stroke-width="2"/><rect x="13.5" y="11.5" width="8" height="8" rx="2.5" fill="currentColor" fill-opacity="0.25" stroke-width="1.6"/><path d="M17.5 13V18" stroke-width="2"/><path d="M15 15.5H20" stroke-width="2"/></svg>
+            <span>جراحة الفم</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-teal-50 dark:bg-teal-900/60 text-teal-900 dark:text-teal-200 text-[10px]">3</span>
+          </button>
+          <button onclick="filterBySpecialty('تقويم')" class="spec-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-spec="تقويم">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-teal-700 dark:text-teal-300"><path d="M6 5.5C6 3.5 8 2.5 12 2.5C16 2.5 18 3.5 18 5.5C18 11 17 21 14.5 21C13 21 13 17 12 17C11 17 11 21 9.5 21C7 21 6 11 6 5.5Z" fill="currentColor" fill-opacity="0.15"/><path d="M2 11.5H22" stroke-width="2.2"/><rect x="8" y="8" width="8" height="7" rx="1.5" fill="currentColor" fill-opacity="0.3" stroke-width="1.6"/><path d="M12 8V15" stroke-width="1.8"/><circle cx="9.5" cy="9.5" r="0.7" fill="currentColor"/><circle cx="14.5" cy="9.5" r="0.7" fill="currentColor"/><circle cx="9.5" cy="13.5" r="0.7" fill="currentColor"/><circle cx="14.5" cy="13.5" r="0.7" fill="currentColor"/></svg>
+            <span>تقويم</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-teal-50 dark:bg-teal-900/60 text-teal-900 dark:text-teal-200 text-[10px]">3</span>
+          </button>
+          <button onclick="filterBySpecialty('غرس')" class="spec-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-spec="غرس">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-teal-700 dark:text-teal-300"><path d="M7 4.5C7 2.8 8.5 2 12 2C15.5 2 17 2.8 17 4.5C17 6.5 16 7.5 15 8H9C8 7.5 7 6.5 7 4.5Z" fill="currentColor" fill-opacity="0.18"/><path d="M8.5 8H15.5V10.5H8.5V8Z" fill="currentColor" fill-opacity="0.35"/><path d="M9.5 10.5L10 20C10 21.2 10.8 22 12 22C13.2 22 14 21.2 14 20L14.5 10.5"/><line x1="8" y1="12" x2="16" y2="12" stroke-width="1.8"/><line x1="8.5" y1="14.5" x2="15.5" y2="14.5" stroke-width="1.8"/><line x1="9" y1="17" x2="15" y2="17" stroke-width="1.8"/><line x1="10" y1="19.5" x2="14" y2="19.5" stroke-width="1.8"/></svg>
+            <span>زراعة وغرس</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-teal-50 dark:bg-teal-900/60 text-teal-900 dark:text-teal-200 text-[10px]">1</span>
+          </button>
+          <button onclick="filterBySpecialty('تركيبات')" class="spec-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-spec="تركيبات">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-teal-700 dark:text-teal-300"><path d="M4 18C4 18 5 17 8 17.5C11 18 13 18 16 17.5C19 17 20 18 20 18C20.5 13 20 7.5 17.5 5.5C15.8 4 14 5 12 6C10 5 8.2 4 6.5 5.5C4 7.5 3.5 13 4 18Z" fill="currentColor" fill-opacity="0.2"/><path d="M12 6V12.5"/><path d="M8 9.5L9 13.5" stroke-width="1.6"/><path d="M16 9.5L15 13.5" stroke-width="1.6"/><path d="M5.5 18C8 17.2 16 17.2 18.5 18" stroke-dasharray="1 1.5"/><path d="M19.5 2.5L20 4L21.5 4.5L20 5L19.5 6.5L19 5L17.5 4.5L19 4Z" fill="currentColor"/></svg>
+            <span>تركيبات</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-teal-50 dark:bg-teal-900/60 text-teal-900 dark:text-teal-200 text-[10px]">3</span>
+          </button>
+          <button onclick="filterBySpecialty('عام')" class="spec-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-spec="عام">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5 text-teal-700 dark:text-teal-300"><path d="M5 6.5C5 4 7 2.5 12 2.5C17 2.5 19 4 19 6.5C19 11.5 17.8 21.5 15.2 21.5C13.5 21.5 13.2 16.5 12 16.5C10.8 16.5 10.5 21.5 8.8 21.5C6.2 21.5 5 11.5 5 6.5Z" fill="currentColor" fill-opacity="0.15"/><path d="M8 6C10 7.5 14 7.5 16 6"/><path d="M12 7V11"/><path d="M8.8 14C8.8 16 9.3 18.2 9.7 19.5" stroke-width="1.6" stroke-dasharray="1.5 2"/><path d="M15.2 14C15.2 16 14.7 18.2 14.3 19.5" stroke-width="1.6" stroke-dasharray="1.5 2"/></svg>
+            <span>عام وجذور</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-teal-50 dark:bg-teal-900/60 text-teal-900 dark:text-teal-200 text-[10px]">38</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Grid (Dynamic Cards) -->
+      <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="noDoctorFound" class="hidden text-center py-16 glass-panel rounded-3xl border-2 border-dashed border-teal-200 dark:border-teal-900/60">
+        <i data-lucide="user-x" class="w-12 h-12 text-teal-400 dark:text-teal-600 mx-auto mb-3"></i>
+        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">لم يتم العثور على أي طبيب يطابق البحث</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">تأكد من كتابة الاسم أو انقر على تصفية "الكل" لعرض جميع أطباء المركز</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- TAB 2: LIVE CLINICS OCCUPANCY (FLOOR MAP)   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="tabLiveClinics" class="hidden space-y-6">
+      <div class="glass-panel rounded-3xl p-5 shadow-card border border-teal-100 dark:border-teal-900/50 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+            <h2 class="text-lg md:text-xl font-extrabold text-[#113238] dark:text-teal-200">توزيع أطباء العيادات الآن (مباشر)</h2>
+          </div>
+          <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">شاهد الطبيب المسكن في كل عيادة من عيادة 1 إلى 16 وغرف الأطفال والبانوراما</p>
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <!-- Shift Switcher -->
+          <div class="flex items-center p-1 bg-teal-50 dark:bg-[#081E22] rounded-2xl border border-teal-200 dark:border-teal-900 text-xs font-bold">
+            <button onclick="setFloorShift('morning')" id="btnFloorMorning" class="px-3.5 py-1.5 rounded-xl transition">صباحي</button>
+            <button onclick="setFloorShift('evening')" id="btnFloorEvening" class="px-3.5 py-1.5 rounded-xl transition">مسائي</button>
+          </div>
+
+          <!-- Day Switcher -->
+          <select id="floorDaySelect" onchange="renderFloorMap()" class="bg-white dark:bg-[#0E262B] border-2 border-teal-200 dark:border-teal-800 rounded-2xl px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 outline-none">
+            <option value="السبت">السبت</option>
+            <option value="الأحد">الأحد</option>
+            <option value="الإثنين">الإثنين</option>
+            <option value="الثلاثاء">الثلاثاء</option>
+            <option value="الأربعاء">الأربعاء</option>
+            <option value="الخميس">الخميس</option>
+            <option value="الجمعة">الجمعة</option>
+          </select>
+
+          <!-- Occupancy Count -->
+          <span id="floorOccupancyStat" class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white text-xs font-extrabold shadow-sm">
+            12 عيادة مشغولة الآن
+          </span>
+        </div>
+      </div>
+
+      <!-- Floor Clinics Grid -->
+      <div id="floorClinicsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- TAB 3: CLINICS WEEKLY MATRIX (SHIFT VIEW)   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="tabClinics" class="hidden space-y-6">
+      
+      <!-- Shift Selector Bar -->
+      <div class="glass-panel rounded-3xl p-5 shadow-card border border-teal-100 dark:border-teal-900/50 flex flex-wrap items-center justify-between gap-4">
+        
+        <div class="flex items-center p-1 bg-teal-50 dark:bg-[#081E22] rounded-2xl border border-teal-200 dark:border-teal-900">
+          <button onclick="setShiftFilter('morning')" id="btnShiftMorning" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-white dark:bg-[#0E262B] text-teal-900 dark:text-teal-200 shadow-sm transition">
+            <i data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
+            <span>الشيفت الصباحي (9:00 ص - 3:30 م)</span>
+          </button>
+          <button onclick="setShiftFilter('evening')" id="btnShiftEvening" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-300 transition">
+            <i data-lucide="moon" class="w-4 h-4 text-indigo-500"></i>
+            <span>الشيفت المسائي (4:00 م - 11:00 م)</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 dark:text-slate-400">تصفية اليوم:</span>
+          <select id="dayFilterSelect" onchange="renderClinicsTable()" class="bg-white dark:bg-[#0E262B] border-2 border-teal-200 dark:border-teal-800 rounded-2xl px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 outline-none">
+            <option value="all">كل أيام الأسبوع</option>
+            <option value="السبت">السبت</option>
+            <option value="الأحد">الأحد</option>
+            <option value="الإثنين">الإثنين</option>
+            <option value="الثلاثاء">الثلاثاء</option>
+            <option value="الأربعاء">الأربعاء</option>
+            <option value="الخميس">الخميس</option>
+            <option value="الجمعة">الجمعة</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Weekly Matrix Table -->
+      <div class="glass-panel rounded-3xl border border-teal-100 dark:border-teal-900/50 shadow-card overflow-hidden">
+        <div class="p-4 border-b border-teal-100 dark:border-teal-900/40 flex items-center justify-between bg-gradient-to-r from-teal-50/80 to-cyan-50/50 dark:from-[#0E262B] dark:to-[#081E22]">
+          <div class="flex items-center gap-2">
+            <i data-lucide="layout-grid" class="w-5 h-5 text-teal-600 dark:text-teal-400"></i>
+            <h3 id="currentMatrixTitle" class="text-sm md:text-base font-extrabold text-[#113238] dark:text-teal-200">جدول الشيفت الصباحي - جميع العيادات</h3>
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-bold">فرع ميامي - الإسكندرية</span>
+        </div>
+
+        <!-- Mobile Swipe Guide -->
+        <div class="md:hidden px-4 py-2 bg-teal-50/90 dark:bg-teal-950/70 border-b border-teal-100 dark:border-teal-900/40 text-[11px] font-bold text-teal-800 dark:text-teal-300 flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-teal-600"></i>
+            <span>اسحب الجدول أفقياً لتصفح جميع العيادات ⟵</span>
+          </span>
+          <span class="px-2 py-0.5 rounded-md bg-teal-100 dark:bg-teal-900 text-[10px]">16 عيادة</span>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar touch-pan-x" style="-webkit-overflow-scrolling: touch;">
+          <table class="w-full text-right border-collapse text-xs md:text-sm min-w-[720px]">
+            <thead id="clinicsTableHead" class="bg-teal-900 text-white font-bold"></thead>
+            <tbody id="clinicsTableBody" class="divide-y divide-teal-100/60 dark:divide-teal-900/40 bg-white/70 dark:bg-[#081E22]/70"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- TAB 4: SERVICES & PRICES                    -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="tabServices" class="hidden space-y-6">
+      
+      <!-- Search Banner -->
+      <div class="glass-panel rounded-3xl p-4 sm:p-6 md:p-7 shadow-card border border-teal-100 dark:border-teal-900/50">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 shadow-xs">
+                <i data-lucide="tag" class="w-5 h-5"></i>
+              </span>
+              <h2 class="text-base sm:text-lg md:text-xl font-extrabold text-[#113238] dark:text-teal-200">قائمة أسعار الخدمات الطبية بالمركز</h2>
+            </div>
+            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 mr-9">بحث فوري باسم الخدمة أو الإجراء لإظهار السعر والمدة والملاحظات فوراً</p>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <button onclick="switchTab('calculator')" class="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200 text-xs font-bold hover:bg-purple-100 transition shadow-xs flex-1 sm:flex-initial justify-center">
+              <i data-lucide="calculator" class="w-4 h-4 text-purple-600"></i>
+              <span>فتح حاسبة التكلفة</span>
+            </button>
+            <button onclick="openAddServiceModal()" class="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs font-bold transition shadow-sm flex-1 sm:flex-initial justify-center">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>إضافة خدمة جديدة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Service Search Input -->
+        <div class="relative">
+          <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-teal-600 dark:text-teal-400">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </div>
+          <input 
+            type="text" 
+            id="serviceSearchInput"
+            oninput="handleServiceSearch(this.value)"
+            placeholder="ابحث باسم الخدمة (مثلاً: كشف، حشو عصب، خلع جراحي، تبييض زووم، زراعة، طربوش زيركون، بانوراما...)" 
+            class="w-full pr-12 pl-10 py-3.5 bg-teal-50/40 dark:bg-[#081E22]/90 rounded-2xl border-2 border-teal-200/90 dark:border-teal-800/80 focus:border-teal-500 dark:focus:border-teal-400 focus:bg-white dark:focus:bg-[#0E262B] focus:ring-4 focus:ring-teal-500/10 outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm md:text-base font-bold shadow-inner transition"
+          >
+          <button 
+            id="clearServiceSearchBtn" 
+            onclick="clearServiceSearch()" 
+            class="hidden absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 hover:text-slate-600">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex items-center gap-1.5 md:gap-2 mt-4 text-xs overflow-x-auto no-scrollbar sm:flex-wrap pb-1 touch-pan-x">
+          <span class="text-slate-500 dark:text-slate-400 font-bold ml-1 flex-shrink-0">الأقسام:</span>
+          <button onclick="filterServiceCategory('')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#113238] to-teal-800 text-white font-black transition shadow-sm border border-teal-700 flex items-center gap-1.5 flex-shrink-0" data-cat="">
+            <span>كل الأقسام (171)</span>
+          </button>
+          <button onclick="filterServiceCategory('كشوفات وبنج')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="كشوفات وبنج">
+            <span>كشوفات وبنج</span>
+          </button>
+          <button onclick="filterServiceCategory('جراحة الفم والأسنان')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="جراحة الفم والأسنان">
+            <span>جراحة الفم والخلع</span>
+          </button>
+          <button onclick="filterServiceCategory('تنظيف وتبييض الأسنان')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="تنظيف وتبييض الأسنان">
+            <span>تنظيف وتبييض</span>
+          </button>
+          <button onclick="filterServiceCategory('حشوات الأسنان')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="حشوات الأسنان">
+            <span>حشوات الأسنان</span>
+          </button>
+          <button onclick="filterServiceCategory('علاج العصب والجذور')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="علاج العصب والجذور">
+            <span>علاج عصب وجذور</span>
+          </button>
+          <button onclick="filterServiceCategory('علاج العصب بالتقفيل')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="علاج العصب بالتقفيل">
+            <span>عصب بالتقفيل النهائي</span>
+          </button>
+          <button onclick="filterServiceCategory('أسنان الأطفال')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="أسنان الأطفال">
+            <span>أسنان الأطفال (Pedo)</span>
+          </button>
+          <button onclick="filterServiceCategory('التركيبات الثابتة والمتحركة')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="التركيبات الثابتة والمتحركة">
+            <span>تركيبات وأطقم</span>
+          </button>
+          <button onclick="filterServiceCategory('الغرسات والزراعة')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="الغرسات والزراعة">
+            <span>غرسات وزراعة</span>
+          </button>
+          <button onclick="filterServiceCategory('تقويم الأسنان')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="تقويم الأسنان">
+            <span>تقويم الأسنان</span>
+          </button>
+          <button onclick="filterServiceCategory('الأشعة الرقمية')" class="service-cat-btn px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E262B] text-slate-700 dark:text-teal-100 hover:bg-teal-50 dark:hover:bg-teal-950/60 font-bold border border-teal-200/80 dark:border-teal-800/70 transition flex items-center gap-1.5 shadow-2xs flex-shrink-0" data-cat="الأشعة الرقمية">
+            <span>أشعة رقمية وCBCT</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Services Cards Grid -->
+      <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="noServiceFound" class="hidden text-center py-16 glass-panel rounded-3xl border-2 border-dashed border-teal-200 dark:border-teal-900/60">
+        <i data-lucide="tag" class="w-12 h-12 text-teal-400 dark:text-teal-600 mx-auto mb-3"></i>
+        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">لم يتم العثور على أي خدمة تطابق هذا البحث</h3>
+        <p class="text-xs text-slate-400 mt-1">تأكد من الاسم أو تصفح الأقسام من الأعلى</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- TAB 5: TREATMENT COST CALCULATOR            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="tabCalculator" class="hidden space-y-6">
+      <div class="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 shadow-card border border-teal-100 dark:border-teal-900/50">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-teal-100 dark:border-teal-900/40 mb-6">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="p-2 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 shadow-xs">
+                <i data-lucide="calculator" class="w-5 h-5"></i>
+              </span>
+              <h2 class="text-base sm:text-lg md:text-xl font-extrabold text-[#113238] dark:text-teal-200">حاسبة تكلفة العلاج وعروض الأسعار</h2>
+            </div>
+            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 mr-9">اختر الخدمات الطبية المطلوبة لحساب إجمالي خطة العلاج وتطبيق الخصم فوراً</p>
+          </div>
+          <button onclick="clearCalculator()" class="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-xs font-bold hover:bg-rose-100 transition shadow-xs w-full sm:w-auto">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span>تفريغ الحاسبة</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Services Picker (Left) -->
+          <div class="lg:col-span-7 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span class="text-xs font-extrabold text-slate-700 dark:text-slate-300">أضف خدمات إلى كشف العلاج:</span>
+              <input type="text" id="calcSearchInput" oninput="renderCalcServicePicker(this.value)" placeholder="ابحث باسم الخدمة للإضافة..." class="px-3.5 py-2 rounded-xl border-2 border-teal-200 dark:border-teal-800 bg-white dark:bg-[#0E262B] text-xs font-bold outline-none focus:border-teal-500 w-full sm:w-56 shadow-inner">
+            </div>
+
+            <div id="calcServicePickerList" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar p-1">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Quotation Summary Card (Right) -->
+          <div class="lg:col-span-5" id="calcSummaryCardContainer">
+            <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-teal-50/90 via-emerald-50/50 to-white dark:from-[#0E262B] dark:to-[#081E22] border-2 border-teal-200/90 dark:border-teal-800 shadow-md space-y-4">
+              <div class="flex items-center justify-between border-b border-teal-200/70 dark:border-teal-800 pb-3">
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="receipt" class="w-4 h-4 text-teal-600"></i>
+                  <h3 class="font-extrabold text-[#113238] dark:text-teal-200 text-sm">كشف خطة العلاج والتكلفة</h3>
+                </div>
+                <span id="calcItemsCountBadge" class="text-xs font-extrabold text-teal-900 dark:text-teal-200 px-2.5 py-1 rounded-lg bg-teal-100 dark:bg-teal-900 border border-teal-200 dark:border-teal-700 shadow-xs">0 خدمات</span>
+              </div>
+
+              <!-- Selected Items List -->
+              <div id="calcCartItems" class="space-y-2 min-h-32 max-h-60 overflow-y-auto custom-scrollbar">
+                <p class="text-xs text-slate-400 text-center py-8 font-medium">لم يتم اختيار أي خدمات بعد، انقر على زر "إضافة +" بجوار أي خدمة</p>
+              </div>
+
+              <!-- Total & Discounts -->
+              <div class="space-y-3 pt-3 border-t border-teal-200/70 dark:border-teal-800 text-xs">
+                <div class="flex items-center justify-between font-bold text-slate-700 dark:text-slate-300">
+                  <span>المجموع الفرعي:</span>
+                  <span id="calcSubtotalText" class="text-sm font-black text-slate-900 dark:text-white">0 ج.م</span>
+                </div>
+
+                <div class="flex items-center justify-between gap-3">
+                  <span class="font-bold text-slate-700 dark:text-slate-300">نسبة الخصم الخاصة:</span>
+                  <div class="flex items-center gap-1 w-28">
+                    <input type="number" id="calcDiscountInput" oninput="calculateTotal()" min="0" max="100" value="0" class="w-full text-center px-2 py-1.5 rounded-xl border-2 border-teal-200 dark:border-teal-800 bg-white dark:bg-[#081E22] font-black outline-none">
+                    <span class="font-bold text-slate-500">%</span>
+                  </div>
+                </div>
+
+                <!-- Final Net Total -->
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-teal-800 to-[#113238] dark:from-teal-900 dark:to-emerald-950 text-white flex items-center justify-between shadow-md border border-teal-500/30">
+                  <span class="font-bold text-xs sm:text-sm">الإجمالي الصافي النهائي:</span>
+                  <span id="calcFinalTotalText" class="text-xl sm:text-2xl font-black text-emerald-300">0 ج.م</span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                  <button onclick="copyQuotationText()" class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    <span>نسخ للواتساب</span>
+                  </button>
+                  <button onclick="window.print()" class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs shadow-sm transition">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span>طباعة الكشف</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MODAL: COMPREHENSIVE ADMIN CONTROL CENTER   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div id="configModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/80 backdrop-blur-md">
+    <div class="glass-panel rounded-2xl sm:rounded-3xl p-3 sm:p-6 max-w-5xl w-full max-h-[96vh] sm:max-h-[92vh] flex flex-col shadow-2xl border-2 border-teal-300 dark:border-teal-700 relative animate-in fade-in zoom-in duration-150 overflow-hidden">
+      
+      <!-- PIN Screen (if not authenticated) -->
+      <div id="devPinScreen" class="py-8 sm:py-10 text-center space-y-4 my-auto">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 flex items-center justify-center mx-auto border-2 border-teal-300 dark:border-teal-700 shadow-md">
+          <i data-lucide="shield-check" class="w-7 h-7 sm:w-8 sm:h-8 text-teal-600"></i>
+        </div>
+        <div>
+          <h3 class="text-lg sm:text-xl font-extrabold text-[#113238] dark:text-teal-200">لوحة تحكم الإدارة الشاملة (Admin Portal)</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">صلاحيات كاملة للتحكم في مواعيد وجداول الأطباء، وتعديل قائمة الأسعار والخدمات، وتسجيل الاعتذارات والنسخ الاحتياطي</p>
+        </div>
+        <div class="max-w-xs mx-auto">
+          <input 
+            type="password" 
+            id="devPinInput" 
+            placeholder="••••" 
+            autocomplete="new-password"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            maxlength="10"
+            style="-webkit-text-security: disc;"
+            class="w-full text-center px-4 py-3 border-2 border-slate-300 dark:border-slate-700 rounded-2xl font-black tracking-widest text-2xl outline-none focus:border-teal-500 dark:bg-[#081E22] dark:text-white transition shadow-inner"
+            onkeydown="if(event.key==='Enter') verifyDevPin()"
+          >
+          <p id="pinErrorMsg" class="hidden text-xs text-rose-600 font-bold mt-2">رمز المرور غير صحيح! يرجى المحاولة مرة أخرى.</p>
+        </div>
+        <div class="flex items-center justify-center gap-2 pt-2">
+          <button onclick="closeConfigModal()" class="px-5 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs">إلغاء</button>
+          <button onclick="verifyDevPin()" class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold text-xs shadow-md transition">دخول لوحة التحكم</button>
+        </div>
+      </div>
+
+      <!-- Settings Panel (after PIN verified) -->
+      <div id="devSettingsContent" class="hidden flex flex-col h-full overflow-hidden">
+        
+        <!-- Modal Top Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-teal-100 dark:border-teal-900/60 flex-shrink-0">
+          <div class="flex items-center gap-2 sm:gap-2.5">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-100 dark:bg-teal-950 flex items-center justify-center text-teal-700 dark:text-teal-300 border border-teal-300 dark:border-teal-700 flex-shrink-0">
+              <i data-lucide="sliders" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm sm:text-base font-extrabold text-[#113238] dark:text-teal-200">لوحة الإدارة والتحكم الشاملة - فرع ميامي</h3>
+              <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">تعديل المواعيد، الأطباء، الأسعار، وحفظ التعديلات فوراً</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <button onclick="resetDevPinPrompt()" title="قفل لوحة الإدارة" class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1 font-bold">
+              <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">قفل</span>
+            </button>
+            <button onclick="closeConfigModal()" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs inside Admin Modal -->
+        <div class="flex gap-1.5 py-2 overflow-x-auto no-scrollbar border-b border-teal-100/60 dark:border-teal-900/40 flex-shrink-0 touch-pan-x">
+          <button onclick="switchAdminTab('doctors')" id="adminTabBtnDoctors" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-teal-700 to-[#113238] text-white shadow-xs flex-shrink-0">
+            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+            <span>إدارة الأطباء (<span id="adminDoctorsCount">61</span>)</span>
+          </button>
+          <button onclick="switchAdminTab('services')" id="adminTabBtnServices" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 flex-shrink-0">
+            <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+            <span>الأسعار والخدمات (<span id="adminServicesCount">171</span>)</span>
+          </button>
+          <button onclick="switchAdminTab('absences')" id="adminTabBtnAbsences" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 flex-shrink-0">
+            <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+            <span>الاعتذارات (<span id="adminAbsencesCount">0</span>)</span>
+          </button>
+          <button onclick="switchAdminTab('notices')" id="adminTabBtnNotices" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 flex-shrink-0">
+            <i data-lucide="pin" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+            <span>سبورة التعليمات (<span id="adminNoticesCount">3</span>)</span>
+          </button>
+          <button onclick="switchAdminTab('backup')" id="adminTabBtnBackup" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-950/40 flex-shrink-0">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            <span>النسخ الاحتياطي والصيانة</span>
+          </button>
+        </div>
+
+        <!-- Admin Content Area (Scrollable) -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-1 py-3 space-y-4">
+          
+          <!-- TAB 1: DOCTORS & SCHEDULES -->
+          <div id="adminPanelDoctors" class="space-y-4">
+            <!-- Search & Add Doctor Bar -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-teal-50/70 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800">
+              <div class="relative w-full sm:w-80">
+                <input type="text" id="adminDoctorSearchInput" oninput="renderAdminDoctorsList()" placeholder="ابحث باسم الطبيب أو التخصص للتعديل..." class="w-full px-3.5 py-2 text-xs font-bold rounded-xl border border-teal-300 dark:border-teal-700 bg-white dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none focus:border-teal-500">
+              </div>
+              <button onclick="toggleAdminAddDoctorForm()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs hover:from-teal-700 hover:to-emerald-700 transition">
+                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                <span>إضافة طبيب جديد</span>
+              </button>
+            </div>
+
+            <!-- Add Doctor Form (Collapsed by default) -->
+            <div id="adminAddDoctorForm" class="hidden p-4 rounded-2xl bg-white dark:bg-[#0E262B] border-2 border-teal-300 dark:border-teal-700 shadow-md space-y-3 animate-in fade-in duration-150">
+              <h4 class="font-extrabold text-xs text-teal-900 dark:text-teal-200 flex items-center gap-2">
+                <i data-lucide="user-plus" class="w-4 h-4 text-teal-600"></i>
+                <span>بيانات الطبيب الجديد</span>
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <input type="text" id="newDoctorName" placeholder="اسم الطبيب (مثال: د/ حسام خليل)" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+                <select id="newDoctorSpecialty" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+                  <option value="طبيب أسنان عام">طبيب أسنان عام</option>
+                  <option value="جراحة الفم والأسنان">جراحة الفم والأسنان</option>
+                  <option value="غرس وزراعة الأسنان">غرس وزراعة الأسنان</option>
+                  <option value="تركيبات متحركة وثابتة">تركيبات متحركة وثابتة</option>
+                  <option value="تقويم الأسنان">تقويم الأسنان</option>
+                  <option value="طب أسنان أطفال (Pedo)">طب أسنان أطفال (Pedo)</option>
+                  <option value="علاج جذور وعصب">علاج جذور وعصب</option>
+                </select>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                  <input type="checkbox" id="newDoctorIsPedo" class="w-4 h-4 accent-teal-600 rounded">
+                  <span>طبيب أطفال متخصص (Pedo)</span>
+                </label>
+              </div>
+              <div class="flex items-center justify-end gap-2 pt-1">
+                <button onclick="toggleAdminAddDoctorForm()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">إلغاء</button>
+                <button onclick="adminSaveNewDoctor()" class="px-5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-xs">حفظ وإضافة</button>
+              </div>
+            </div>
+
+            <!-- Doctors Admin List -->
+            <div id="adminDoctorsListContainer" class="space-y-3">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 2: SERVICES & PRICING -->
+          <div id="adminPanelServices" class="hidden space-y-4">
+            <!-- Filter, Search & Actions Bar -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-teal-50/70 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800">
+              <div class="flex flex-1 items-center gap-2 w-full flex-wrap sm:flex-nowrap">
+                <input type="text" id="adminServiceSearchInput" oninput="renderAdminServicesList()" placeholder="ابحث باسم الخدمة..." class="w-full sm:w-64 px-3.5 py-2 text-xs font-bold rounded-xl border border-teal-300 dark:border-teal-700 bg-white dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none focus:border-teal-500">
+                <select id="adminServiceCategoryFilter" onchange="renderAdminServicesList()" class="px-3 py-2 text-xs font-bold rounded-xl border border-teal-300 dark:border-teal-700 bg-white dark:bg-[#081E22] outline-none">
+                  <option value="">جميع الأقسام</option>
+                  <option value="كشوفات وبنج">كشوفات وبنج</option>
+                  <option value="جراحة الفم والأسنان">جراحة الفم والأسنان</option>
+                  <option value="تنظيف وتبييض الأسنان">تنظيف وتبييض الأسنان</option>
+                  <option value="حشوات الأسنان">حشوات الأسنان</option>
+                  <option value="علاج العصب والجذور">علاج العصب والجذور</option>
+                  <option value="علاج العصب بالتقفيل">علاج العصب بالتقفيل</option>
+                  <option value="أسنان الأطفال">أسنان الأطفال</option>
+                  <option value="التركيبات الثابتة والمتحركة">التركيبات الثابتة والمتحركة</option>
+                  <option value="الغرسات والزراعة">الغرسات والزراعة</option>
+                  <option value="تقويم الأسنان">تقويم الأسنان</option>
+                  <option value="الأشعة الرقمية">الأشعة الرقمية</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button onclick="toggleBulkAdjustPriceForm()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition">
+                  <i data-lucide="percent" class="w-3.5 h-3.5"></i>
+                  <span>تعديل جماعي للأسعار %</span>
+                </button>
+                <button onclick="toggleAdminAddServiceForm()" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition">
+                  <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                  <span>إضافة خدمة جديدة</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Bulk Price Adjustment Form -->
+            <div id="adminBulkAdjustForm" class="hidden p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 space-y-3">
+              <h4 class="font-extrabold text-xs text-amber-900 dark:text-amber-200">تعديل أسعار جماعي بنسبة مئوية</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">أدخل النسبة المئوية لزيادة أو تخفيض الأسعار (مثال: +10 لزيادة 10% أو -5 لتخفيض 5%):</p>
+              <div class="flex items-center gap-3">
+                <input type="number" id="bulkPercentInput" placeholder="مثال: 10" class="w-32 px-3 py-2 rounded-xl border border-amber-300 text-xs font-bold dark:bg-[#081E22] outline-none">
+                <button onclick="applyBulkPriceAdjustment()" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs">تطبيق النسبة فوراً</button>
+                <button onclick="toggleBulkAdjustPriceForm()" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500">إلغاء</button>
+              </div>
+            </div>
+
+            <!-- Add New Service Form -->
+            <div id="adminAddServiceForm" class="hidden p-4 rounded-2xl bg-white dark:bg-[#0E262B] border-2 border-teal-300 dark:border-teal-700 shadow-md space-y-3 animate-in fade-in duration-150">
+              <h4 class="font-extrabold text-xs text-teal-900 dark:text-teal-200 flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4 text-teal-600"></i>
+                <span>بيانات الخدمة الطبية الجديدة</span>
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <input type="text" id="newServiceName" placeholder="اسم الخدمة..." class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+                <select id="newServiceCategory" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+                  <option value="كشوفات وبنج">كشوفات وبنج</option>
+                  <option value="جراحة الفم والأسنان">جراحة الفم والأسنان</option>
+                  <option value="تنظيف وتبييض الأسنان">تنظيف وتبييض الأسنان</option>
+                  <option value="حشوات الأسنان">حشوات الأسنان</option>
+                  <option value="علاج العصب والجذور">علاج العصب والجذور</option>
+                  <option value="علاج العصب بالتقفيل">علاج العصب بالتقفيل</option>
+                  <option value="أسنان الأطفال">أسنان الأطفال</option>
+                  <option value="التركيبات الثابتة والمتحركة">التركيبات الثابتة والمتحركة</option>
+                  <option value="الغرسات والزراعة">الغرسات والزراعة</option>
+                  <option value="تقويم الأسنان">تقويم الأسنان</option>
+                  <option value="الأشعة الرقمية">الأشعة الرقمية</option>
+                </select>
+                <input type="number" id="newServiceSpecPrice" placeholder="سعر الأخصائي (ج.م)" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+                <input type="number" id="newServiceConsPrice" placeholder="سعر الاستشاري (ج.م)" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input type="text" id="newServiceDuration" placeholder="المدة المتوقعة (مثال: 30 دقيقة / جلستان)" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+                <input type="text" id="newServiceNotes" placeholder="ملاحظات وتفاصيل إضافية للخدمة..." class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold dark:bg-[#081E22] outline-none">
+              </div>
+              <div class="flex items-center justify-end gap-2 pt-1">
+                <button onclick="toggleAdminAddServiceForm()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">إلغاء</button>
+                <button onclick="adminSaveNewService()" class="px-5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-xs">حفظ الخدمة</button>
+              </div>
+            </div>
+
+            <!-- Services Table -->
+            <div class="border border-teal-200 dark:border-teal-800 rounded-2xl overflow-hidden shadow-xs">
+              <div class="max-h-[55vh] overflow-x-auto overflow-y-auto custom-scrollbar touch-pan-x" style="-webkit-overflow-scrolling: touch;">
+                <table class="w-full text-right text-xs min-w-[520px]">
+                  <thead class="sticky top-0 bg-[#0C252A] text-white z-10 font-black">
+                    <tr>
+                      <th class="p-3">اسم الخدمة</th>
+                      <th class="p-3">القسم</th>
+                      <th class="p-3 text-center">سعر الأخصائي</th>
+                      <th class="p-3 text-center">سعر الاستشاري</th>
+                      <th class="p-3 text-center">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminServicesTableBody" class="divide-y divide-teal-100 dark:divide-teal-900/60 bg-white dark:bg-[#081E22]">
+                    <!-- Rendered via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: ABSENCE MANAGEMENT -->
+          <div id="adminPanelAbsences" class="hidden space-y-4">
+            <div class="p-4 rounded-2xl bg-rose-50/80 dark:bg-rose-950/30 border-2 border-rose-200 dark:border-rose-900 space-y-3">
+              <div class="flex items-center gap-2">
+                <i data-lucide="user-minus" class="w-4 h-4 text-rose-600"></i>
+                <h4 class="font-bold text-xs text-rose-900 dark:text-rose-200">تسجيل اعتذار طبيب عن الحضور اليوم</h4>
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">سيظهر الطبيب بشارة "معتذر اليوم" باللون الأحمر ويُستبعد من شاشة التواجد الحالي مؤقتاً.</p>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <select id="absentDoctorSelect" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#081E22] text-xs font-bold text-slate-800 dark:text-slate-200 outline-none">
+                  <!-- Dynamically populated -->
+                </select>
+                <input type="text" id="absentReasonInput" placeholder="السبب (اختياري: ظرف طارئ...)" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#081E22] text-xs font-semibold outline-none">
+              </div>
+
+              <button onclick="markDoctorAbsent()" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition">
+                تسجيل الاعتذار لليوم
+              </button>
+
+              <div class="pt-2 border-t border-rose-200 dark:border-rose-900 space-y-1">
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">الأطباء المعتذرون اليوم:</span>
+                <div id="absentDoctorsList" class="space-y-1 max-h-32 overflow-y-auto"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: NOTICES MANAGEMENT -->
+          <div id="adminPanelNotices" class="hidden space-y-4">
+            <div class="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border-2 border-amber-200 dark:border-amber-900 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="pin" class="w-4 h-4 text-amber-600"></i>
+                  <h4 class="font-bold text-xs text-amber-900 dark:text-amber-200">إدارة سبورة ملاحظات وتعليمات اليوم</h4>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button onclick="clearAllNotices()" class="px-2.5 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/60 text-xs font-bold transition">
+                    مسح الكل
+                  </button>
+                  <button onclick="toggleAdminAddNoticeForm()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span>ملاحظة جديدة</span>
+                  </button>
+                </div>
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">تظهر هذه الملاحظات في أعلى شاشة الريسبشن لجميع الأجهزة وتساعد الموظفين في تذكر صيانة الأجهزة ومواعيد وتأخيرات الأطباء والتعليمات الإدارية.</p>
+
+              <!-- Inline Add Notice Form (Collapsed by default, opens right inside this panel) -->
+              <div id="adminAddNoticeForm" class="hidden p-4 rounded-2xl bg-white dark:bg-[#0E262B] border-2 border-amber-300 dark:border-amber-700 shadow-md space-y-3 animate-in fade-in duration-150">
+                <div class="flex items-center justify-between border-b border-amber-100 dark:border-amber-900/60 pb-2">
+                  <h4 class="font-extrabold text-xs text-amber-900 dark:text-amber-200 flex items-center gap-2">
+                    <i data-lucide="pin" class="w-3.5 h-3.5 text-amber-600"></i>
+                    <span>بيانات الملاحظة والتعليمات الجديدة</span>
+                  </h4>
+                  <button onclick="toggleAdminAddNoticeForm()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                  <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">عنوان الملاحظة / التنبيه</label>
+                    <input type="text" id="adminNewNoticeTitle" placeholder="مثال: صيانة جهاز البانوراما أو تأخير دكتور..." class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none focus:border-amber-500">
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">نوع وتصنيف التنبيه</label>
+                      <select id="adminNewNoticeType" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+                        <option value="urgent">🔴 تنبيه عاجل / أجهزة وطوارئ</option>
+                        <option value="warning" selected>🟡 صيانة وتعديل مواعيد</option>
+                        <option value="info">🔵 مواعيد أطباء وشفتات</option>
+                        <option value="success">🟢 توجيه إداري أو عروض</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">الجهة المصدرة</label>
+                      <input type="text" id="adminNewNoticeAuthor" placeholder="مثال: إدارة المركز / المدير الطبي" value="إدارة المركز" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">نص الملاحظة / التعليمات بالتفصيل</label>
+                    <textarea id="adminNewNoticeContent" rows="3" placeholder="اكتب التعليمات بوضوح ليراها موظفو الريسبشن فوراً على جميع الأجهزة..." class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-medium dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none focus:border-amber-500"></textarea>
+                  </div>
+
+                  <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="adminNewNoticePinned" class="w-4 h-4 text-amber-600 rounded">
+                    <label for="adminNewNoticePinned" class="font-bold text-slate-700 dark:text-slate-300 cursor-pointer">تثبيت التنبيه في البداية (Pinned 📌)</label>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-amber-100 dark:border-amber-900">
+                  <button onclick="toggleAdminAddNoticeForm()" class="px-3.5 py-1.5 rounded-xl text-slate-500 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition">إلغاء</button>
+                  <button onclick="adminSaveNewNoticeInline()" class="px-5 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs shadow-xs transition">
+                    نشر الملاحظة على السبورة
+                  </button>
+                </div>
+              </div>
+
+              <div id="adminNoticesList" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar pt-1">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: BACKUP & MAINTENANCE -->
+          <div id="adminPanelBackup" class="hidden space-y-4">
+            
+            <div class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 space-y-2">
+              <div class="flex items-center gap-2 text-teal-900 dark:text-teal-200 font-extrabold text-xs">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
+                <span>المزامنة السحابية والحفظ التلقائي يعملان بنجاح</span>
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">كافة تعديلات الأطباء والأسعار والتعليمات واعتذارات اليوم يتم حفظها ومزامنتها لحظياً وبشكل مشفر مع جميع شاشات المركز تلقائياً دون الحاجة لأي ضبط يدوي.</p>
+            </div>
+
+            <!-- Export / Import Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="p-4 rounded-2xl bg-white dark:bg-[#0E262B] border border-teal-200 dark:border-teal-800 space-y-2">
+                <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4 text-teal-600"></i>
+                  <span>تصدير نسخة احتياطية كاملة (JSON)</span>
+                </h5>
+                <p class="text-[11px] text-slate-500">قم بتنزيل ملف يحتوي على كافة بيانات الأطباء وجداولهم والأسعار الحالية لحفظها على جهازك كأرشيف.</p>
+                <button onclick="exportBackupJSON()" class="w-full py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-xs transition">
+                  تنزيل ملف النسخة الاحتياطية
+                </button>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white dark:bg-[#0E262B] border border-teal-200 dark:border-teal-800 space-y-2">
+                <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                  <i data-lucide="upload" class="w-4 h-4 text-cyan-600"></i>
+                  <span>استيراد نسخة احتياطية من ملف</span>
+                </h5>
+                <p class="text-[11px] text-slate-500">استعادة بيانات المركز من ملف JSON تم تصديره سابقاً إلى هذا الجهاز.</p>
+                <input type="file" id="importFileInput" accept=".json" onchange="handleBackupFileImport(event)" class="hidden">
+                <button onclick="document.getElementById('importFileInput').click()" class="w-full py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs shadow-xs transition">
+                  اختيار ملف واستعادة البيانات
+                </button>
+              </div>
+            </div>
+
+            <!-- Reset to Defaults Double-PIN Warning Box -->
+            <div class="p-4 rounded-2xl bg-rose-50/70 dark:bg-rose-950/40 border-2 border-rose-300 dark:border-rose-900/80 space-y-3">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h5 class="font-extrabold text-xs text-rose-900 dark:text-rose-200">إجراء أمني وإداري مشدد: استعادة البيانات الافتراضية</h5>
+                  <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
+                    إلغاء كافة التعديلات المدخلة محلياً والعودة إلى التشكيل والأسعار الأصلية لفرع ميامي.
+                    <span class="font-bold text-rose-700 dark:text-rose-300 block mt-1">⚠️ يتطلب هذا الإجراء إدخال الرمز السري للإدارة مرتين متتاليتين للتأكيد لمنع المسح بالخطأ.</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-rose-200 dark:border-rose-900/60 flex items-center justify-between gap-3">
+                <span class="text-[11px] text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1">
+                  <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                  <span>تأكيد أمني مزدوج (PIN × 2)</span>
+                </span>
+                <button onclick="resetToDefaultData()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                  <span>استعادة البيانات الافتراضية</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Modal Bottom Bar -->
+        <div class="flex items-center justify-between pt-3 border-t border-teal-100 dark:border-teal-900/60 flex-shrink-0">
+          <span class="text-[11px] text-slate-400">بوابة إدارة فرع ميامي | مجموعة الجوهرة لطب الأسنان</span>
+          <button onclick="closeConfigModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs transition">
+            إغلاق النافذة
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MODAL: EDIT SERVICE MODAL                   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div id="editServiceModal" style="z-index: 99999;" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+    <div class="glass-panel rounded-3xl p-5 max-w-lg w-full shadow-2xl border-2 border-teal-400 dark:border-teal-600 space-y-4 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-2 border-b border-teal-100 dark:border-teal-900">
+        <h4 class="font-extrabold text-sm text-[#113238] dark:text-teal-200 flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-4 h-4 text-teal-600"></i>
+          <span>تعديل بيانات الخدمة والسعر</span>
+        </h4>
+        <button onclick="closeEditServiceModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="editServiceId">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">اسم الخدمة</label>
+          <input type="text" id="editServiceName" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">القسم / التصنيف</label>
+          <select id="editServiceCategory" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+            <option value="كشوفات وبنج">كشوفات وبنج</option>
+            <option value="جراحة الفم والأسنان">جراحة الفم والأسنان</option>
+            <option value="تنظيف وتبييض الأسنان">تنظيف وتبييض الأسنان</option>
+            <option value="حشوات الأسنان">حشوات الأسنان</option>
+            <option value="علاج العصب والجذور">علاج العصب والجذور</option>
+            <option value="علاج العصب بالتقفيل">علاج العصب بالتقفيل</option>
+            <option value="أسنان الأطفال">أسنان الأطفال</option>
+            <option value="التركيبات الثابتة والمتحركة">التركيبات الثابتة والمتحركة</option>
+            <option value="الغرسات والزراعة">الغرسات والزراعة</option>
+            <option value="تقويم الأسنان">تقويم الأسنان</option>
+            <option value="الأشعة الرقمية">الأشعة الرقمية</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">سعر الأخصائي (ج.م)</label>
+            <input type="number" id="editServiceSpecPrice" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">سعر الاستشاري (ج.م)</label>
+            <input type="number" id="editServiceConsPrice" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">ملاحظات / مدة الخدمة</label>
+          <input type="text" id="editServiceNotes" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-teal-100 dark:border-teal-900">
+        <button onclick="closeEditServiceModal()" class="px-4 py-2 rounded-xl text-slate-500 font-bold text-xs">إلغاء</button>
+        <button onclick="saveEditService()" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-xs">حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MODAL: ADD / EDIT DAILY NOTICE              -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div id="addNoticeModal" style="z-index: 99999;" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-900/80 backdrop-blur-sm">
+    <div class="glass-panel rounded-3xl p-5 max-w-lg w-full shadow-2xl border-2 border-amber-300 dark:border-amber-700 space-y-4 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-2 border-b border-amber-100 dark:border-amber-900/60">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950 flex items-center justify-center text-amber-700 dark:text-amber-300">
+            <i data-lucide="pin" class="w-4 h-4"></i>
+          </div>
+          <h4 class="font-extrabold text-sm text-[#113238] dark:text-amber-200">إضافة تعليمات وملاحظة جديدة لليوم</h4>
+        </div>
+        <button onclick="closeAddNoticeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">عنوان الملاحظة / التنبيه</label>
+          <input type="text" id="newNoticeTitle" placeholder="مثال: صيانة جهاز البانوراما أو تأخير دكتور..." class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none focus:border-amber-500">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">نوع وتصنيف التنبيه</label>
+            <select id="newNoticeType" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+              <option value="urgent">🔴 تنبيه عاجل / أجهزة وطوارئ</option>
+              <option value="warning" selected>🟡 صيانة وتعديل مواعيد</option>
+              <option value="info">🔵 مواعيد أطباء وشفتات</option>
+              <option value="success">🟢 توجيه إداري أو عروض</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">الجهة المصدرة</label>
+            <input type="text" id="newNoticeAuthor" placeholder="مثال: مشرف الاستقبال / المدير الطبي" value="مشرف الاستقبال" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">نص الملاحظة / التعليمات بالتفصيل</label>
+          <textarea id="newNoticeContent" rows="3" placeholder="اكتب التعليمات بوضوح ليراها موظفو الريسبشن فوراً على جميع الأجهزة..." class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-medium dark:bg-[#081E22] text-slate-800 dark:text-slate-100 outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="newNoticePinned" class="w-4 h-4 text-amber-600 rounded">
+          <label for="newNoticePinned" class="font-bold text-slate-700 dark:text-slate-300 cursor-pointer">تثبيت التنبيه في البداية (Pinned 📌)</label>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-amber-100 dark:border-amber-900">
+        <button onclick="closeAddNoticeModal()" class="px-4 py-2 rounded-xl text-slate-500 font-bold text-xs">إلغاء</button>
+        <button onclick="saveNewNotice()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs shadow-xs transition">
+          نشر الملاحظة على السبورة
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
